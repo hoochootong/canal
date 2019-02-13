@@ -10,11 +10,20 @@
 	<artifactId>canal.client</artifactId>
 	<packaging>jar</packaging>
 	<name>canal client module for otter ${project.version}</name>
+	<repositories>
+		<repository>
+			<id>sample-repository</id>
+			<name>local repository</name>
+			<url>C:\Users\leejaeho\.m2\repository\com\alibaba\otter\canal.protocol</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.alibaba.otter</groupId>
 			<artifactId>canal.protocol</artifactId>
 			<version>${project.version}</version>
+			<scope>system</scope>
+			<systemPath>C:/Users/leejaeho/.m2/repository/com/alibaba/otter/canal.protocol/1.0.25/canal.protocol-1.0.25.jar</systemPath>
 		</dependency>
 
 		<!-- junit -->
@@ -98,4 +107,55 @@
 			</build>
 		</profile>
 	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<includes>
+										<include>com/turn/**</include>
+										<include>com/google/protobuf/**</include>
+										<include>com/alibaba/otter/**</include>
+									</includes>
+								</filter>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+							<createSourcesJar>true</createSourcesJar>
+							<shadeSourcesContent>true</shadeSourcesContent>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<artifactSet>
+								<includes>
+									<include>com.google.protobuf:protobuf-java</include>
+								</includes>
+							</artifactSet>
+							<relocations>
+								<relocation>
+									<pattern>com.google.protobuf</pattern>
+									<shadedPattern>com.alibaba.protobuf</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
